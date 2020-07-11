@@ -5,17 +5,17 @@ const _ = {
 };
 
 module.exports = class KvStorage {
-  constructor({ accountId, namespace, authEmail, authKey }) {
+  constructor({ accountId, namespace, authEmail, authKey, fetch, FormData }) {
     this.accountId = accountId;
     this.namespace = namespace;
     this.authEmail = authEmail;
     this.authKey = authKey;
+    this.fetch = fetch || global.fetch;
+    this.FormData = FormData || global.FormData;
   }
 
   getNamespaceUrl() {
-    return new URL(
-      `https://api.cloudflare.com/client/v4/accounts/${this.accountId}/storage/kv/namespaces/${this.namespace}`,
-    );
+    return `https://api.cloudflare.com/client/v4/accounts/${this.accountId}/storage/kv/namespaces/${this.namespace}`;
   }
 
   getUrlForKey(key) {
@@ -43,7 +43,7 @@ module.exports = class KvStorage {
     url.search = searchParams.toString();
 
     // eslint-disable-next-line no-undef
-    const response = await fetch(url, {
+    const response = await this.fetch(url, {
       headers: {
         'X-Auth-Email': this.authEmail,
         'X-Auth-Key': this.authKey,
@@ -67,7 +67,7 @@ module.exports = class KvStorage {
     const url = this.getUrlForKey(key);
 
     // eslint-disable-next-line no-undef
-    const response = await fetch(url, {
+    const response = await this.fetch(url, {
       headers: {
         'X-Auth-Email': this.authEmail,
         'X-Auth-Key': this.authKey,
@@ -125,14 +125,14 @@ module.exports = class KvStorage {
     url.search = searchParams.toString();
 
     // eslint-disable-next-line no-undef
-    const formData = new FormData();
+    const formData = new this.FormData();
     formData.append('value', value);
     if (metadata) {
       formData.append('metadata', JSON.stringify(metadata));
     }
 
     // eslint-disable-next-line no-undef
-    const response = await fetch(url.toString(), {
+    const response = await this.fetch(url.toString(), {
       method: 'PUT',
       headers: { ...formData.headers, ...headers },
       body: value,

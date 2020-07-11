@@ -12,6 +12,7 @@ describe('kv-storage', () => {
       const kvStorage = new KvStorage({
         namespace: 'namespace',
         accountId: 'accountId',
+        fetch,
       });
       nock('https://api.cloudflare.com')
         .get('/client/v4/accounts/accountId/storage/kv/namespaces/namespace/values/key')

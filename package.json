@@ -1,6 +1,6 @@
 {
   "name": "cloudflare-kv-storage-rest",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Tiny javascript and node wrapper for the cloudflare kv-storage rest-api",
   "main": "src/index.js",
   "devDependencies": {
@@ -19,7 +19,8 @@
   "scripts": {
     "lint": "eslint src",
     "test": "npm run unit && npm run lint",
-    "unit": "mocha test/**/*.test.js"
+    "unit": "mocha test/**/*.test.js",
+    "package": "rm -rf node_modules && npm install --prod"
   },
   "repository": {
     "type": "git",

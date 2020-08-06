@@ -135,7 +135,7 @@ module.exports = class KvStorage {
     const response = await this.fetch(url.toString(), {
       method: 'PUT',
       headers: { ...formData.headers, ...headers },
-      body: value,
+      body: formData.stream,
     });
 
     return response.ok;

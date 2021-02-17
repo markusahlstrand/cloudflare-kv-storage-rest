@@ -1,8 +1,11 @@
 {
   "name": "cloudflare-kv-storage-rest",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Tiny javascript and node wrapper for the cloudflare kv-storage rest-api",
   "main": "src/index.js",
+  "files": [
+    "src/index.js"
+  ],
   "devDependencies": {
     "chai": "4.2.0",
     "eslint": "7.4.0",

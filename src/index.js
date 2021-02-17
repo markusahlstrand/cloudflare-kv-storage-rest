@@ -124,18 +124,26 @@ module.exports = class KvStorage {
 
     url.search = searchParams.toString();
 
+    if (!metadata) {
+      // https://api.cloudflare.com/#workers-kv-namespace-write-key-value-pair
+      // eslint-disable-next-line no-undef
+      const response = await this.fetch(url.toString(), {
+        method: 'PUT',
+        headers: { ...headers },
+        body: value,
+      });
+      return response.ok;
+    }
+    // https://api.cloudflare.com/#workers-kv-namespace-write-key-value-pair-with-metadata
     // eslint-disable-next-line no-undef
     const formData = new this.FormData();
     formData.append('value', value);
-    if (metadata) {
-      formData.append('metadata', JSON.stringify(metadata));
-    }
-
+    formData.append('metadata', JSON.stringify(metadata));
     // eslint-disable-next-line no-undef
     const response = await this.fetch(url.toString(), {
       method: 'PUT',
-      headers: { ...formData.headers, ...headers },
-      body: formData.stream,
+      headers: { ...formData.getHeaders(), ...headers },
+      body: formData,
     });
 
     return response.ok;

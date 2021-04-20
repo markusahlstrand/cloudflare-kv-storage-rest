@@ -1,4 +1,5 @@
 const lodashGet = require('lodash.get');
+const fetchRetry = require('fetch-retry');
 
 const _ = {
   get: lodashGet,
@@ -10,7 +11,7 @@ module.exports = class KvStorage {
     this.namespace = namespace;
     this.authEmail = authEmail;
     this.authKey = authKey;
-    this.fetch = fetch || global.fetch;
+    this.fetch = fetchRetry(fetch || global.fetch);
     this.FormData = FormData || global.FormData;
   }
 

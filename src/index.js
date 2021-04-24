@@ -11,7 +11,9 @@ module.exports = class KvStorage {
     this.namespace = namespace;
     this.authEmail = authEmail;
     this.authKey = authKey;
-    this.fetch = fetchRetry(fetch || global.fetch);
+    this.fetch = fetchRetry(fetch || global.fetch, {
+      retryOn: [429, 500, 503],
+    });
     this.FormData = FormData || global.FormData;
   }
 

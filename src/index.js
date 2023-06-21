@@ -6,11 +6,12 @@ const _ = {
 };
 
 module.exports = class KvStorage {
-  constructor({ accountId, namespace, authEmail, authKey, fetch, FormData }) {
+  constructor({ accountId, namespace, authEmail, authKey, authToken, fetch, FormData }) {
     this.accountId = accountId;
     this.namespace = namespace;
     this.authEmail = authEmail;
     this.authKey = authKey;
+    this.authToken = authToken;
     this.fetch = fetchRetry(fetch || global.fetch, {
       retryOn: [429, 500, 503],
     });
@@ -23,6 +24,14 @@ module.exports = class KvStorage {
 
   getUrlForKey(key) {
     return new URL(`${this.getNamespaceUrl()}/values/${key}`);
+  }
+
+  getAuthHeaders() {
+    const headers = {};
+    if (this.authEmail) headers["X-Auth-Email"] = this.authEmail;
+    if (this.authKey) headers["X-Auth-Key"] = this.authKey;
+    if (this.authToken) headers["Authorization"] = `Bearer ${this.authToken}`;
+    return headers;
   }
 
   async list(options = {}) {
@@ -47,10 +56,7 @@ module.exports = class KvStorage {
 
     // eslint-disable-next-line no-undef
     const response = await this.fetch(url, {
-      headers: {
-        'X-Auth-Email': this.authEmail,
-        'X-Auth-Key': this.authKey,
-      },
+      headers: this.getAuthHeaders(),
     });
 
     if (response.ok) {
@@ -71,10 +77,7 @@ module.exports = class KvStorage {
 
     // eslint-disable-next-line no-undef
     const response = await this.fetch(url, {
-      headers: {
-        'X-Auth-Email': this.authEmail,
-        'X-Auth-Key': this.authKey,
-      },
+      headers: this.getAuthHeaders(),
     });
 
     if (response.ok) {
@@ -120,10 +123,7 @@ module.exports = class KvStorage {
       searchParams.append('expiration_ttl', expirationTtl);
     }
 
-    const headers = {
-      'X-Auth-Email': this.authEmail,
-      'X-Auth-Key': this.authKey,
-    };
+    const headers = this.getAuthHeaders();
 
     url.search = searchParams.toString();
 
@@ -157,10 +157,7 @@ module.exports = class KvStorage {
 
     // eslint-disable-next-line no-undef
     const response = await fetch(url, {
-      headers: {
-        'X-Auth-Email': this.authEmail,
-        'X-Auth-Key': this.authKey,
-      },
+      headers: this.getAuthHeaders(),
       method: 'DELETE',
     });
 
